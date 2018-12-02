@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Chef\'s Choice</string>
+    <string name="button">CHOOSE</string>
+    <string name="editText">What is your choice today?</string>
+    <string name="textView2">Chef\'s</string>
+    <string name="textView3">Choice</string>
+</resources>
