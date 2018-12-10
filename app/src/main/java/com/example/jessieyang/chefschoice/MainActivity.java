@@ -17,6 +17,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.example.jessieyang.MESSAGE";
     private static final String TAG = "chefschoice";
     private static final String API_KEY = "d6ab99096385e79634e00142feb80e9e";
-    private String message;
     private int pagecount;
 //    private TextView result = findViewById(R.id.textView4);
     private boolean resultFound = true;
@@ -65,10 +67,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void choose(View view) {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
+        EditText editText = (EditText) findViewById(R.id.editText);
+        String message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
         startAPICall();
-        EditText editText = (EditText) findViewById(R.id.editText);
-        message = editText.getText().toString();
         startActivity(intent);
     }
 
@@ -87,12 +89,14 @@ public class MainActivity extends AppCompatActivity {
                         public void onResponse(final JSONObject response) {
                             Log.d("This is the response", response.toString());
 
-                            try {
-                                jsonParse(response);
-                                JSONArray recipe = result.get("recipes").getAsJsonArray();
-                            } catch (Exception e) {
-                                Log.w("No Recipes Available", e.toString());
-                            }
+                            JsonParser parser = new JsonParser();
+                            JsonObject result = parser.parse(response.toString()).getAsJsonObject();
+                            JsonArray recipes = result.get("recipes").getAsJsonArray();
+//                            try {
+//
+//                            } catch (Exception e) {
+//                                Log.w("No Recipes Available", e.toString());
+//                            }
                         }
                     }, new Response.ErrorListener() {
                 @Override
@@ -104,21 +108,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    void jsonParse(JSONObject jsonObject) {
-        try {
-            String count = jsonObject.getString("count");
-            String recipes = jsonObject.getString("recipes");
-            String title = jsonObject.getString("title");
-        } catch (Exception e) {
-            resultFound = false;
-        }
-//        if (!resultFound) {
-//            result.setText("Here_is_the_recipes:");
-//        } else {
-//            result.setText("No Recipes Found");
-//        }
     }
 }
 //https://www.food2fork.com/api/search?key=d6ab99096385e79634e00142feb80e9e&q=chicken%20breast&page=2

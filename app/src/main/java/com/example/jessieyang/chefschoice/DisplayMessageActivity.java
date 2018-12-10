@@ -15,23 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class DisplayMessageActivity extends AppCompatActivity {
-    private TextView resultshown;
-    private boolean resultFound = true;
-
-    void jsonParse(JSONObject jsonObject) {
-        try {
-            String count = jsonObject.getString("count");
-            String recipes = jsonObject.getString("recipes");
-            String title = jsonObject.getString("title");
-        } catch (Exception e) {
-            resultFound = false;
-        }
-        if (!resultFound) {
-            resultshown.setText("Here is the recipes:");
-        } else {
-            resultshown.setText("No Recipes Found");
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
