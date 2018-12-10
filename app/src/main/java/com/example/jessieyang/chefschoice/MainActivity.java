@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -21,120 +22,99 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
+
 
 
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.example.jessieyang.MESSAGE";
+    private static final String TAG = "chefschoice";
+    private static final String API_KEY = "d6ab99096385e79634e00142feb80e9e";
+    private String message;
+    private int pagecount = 1;
+//    private TextView result = findViewById(R.id.textView4);
+    private boolean resultFound = true;
 
-    private RequestQueue queue;
+    /** Request queue for our network requests. */
+    private static RequestQueue requestQueue;
 
+    /**
+     * Run when our activity comes into view.
+     *
+     * @param savedInstanceState state that was saved by the activity last time it was paused
+     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        queue = Volley.newRequestQueue(this);
 
-//        final Button startAPICall = findViewById(R.id.startAPICall);
-//        startAPICall.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(final View v) {
-//                Log.d(TAG, "Start API button clicked");
-//                startAPICall();
-//            }
-//        }
+        // Set up a queue for our Volley requests
+        requestQueue = Volley.newRequestQueue(this);
+
+        // Load the main layout for our activity
+        setContentView(R.layout.activity_main);
+
+        // Attach the handler to our UI button
+        final Button startAPICall = findViewById(R.id.button);
+        startAPICall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                Log.d(TAG, "Start API button clicked");
+                startAPICall();
+            }
+        });
     }
 
     public void search(View view) {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
         EditText editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
+        message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
-
-//        // cancelling all requests about this search if in queue
-//        queue.cancelAll(TAG_SEARCH_NAME);
-//
-//        // first StringRequest: getting items searched
-//        StringRequest stringRequest = searchNameStringRequest(txtSearch.getText().toString());
-//        stringRequest.setTag(TAG_SEARCH_NAME);
-//
-//        // executing the request (adding to queue)
-//        queue.add(stringRequest);
     }
 
-//    private StringRequest searchNameStringRequest(String nameSearch) {
-//        final String API = "&api_key=<<YOUR_API_KEY_HERE>>";
-//        final String NAME_SEARCH = "&q=";
-//        final String DATA_SOURCE = "&ds=Standard Reference";
-//        final String FOOD_GROUP = "&fg=";
-//        final String SORT = "&sort=r";
-//        final String MAX_ROWS = "&max=25";
-//        final String BEGINNING_ROW = "&offset=0";
-//        final String URL_PREFIX = "https://api.nal.usda.gov/ndb/search/?format=json";
-//
-//        String url = URL_PREFIX + API + NAME_SEARCH + nameSearch + DATA_SOURCE + FOOD_GROUP + SORT + MAX_ROWS + BEGINNING_ROW;
-//
-//        // 1st param => type of method (GET/PUT/POST/PATCH/etc)
-//        // 2nd param => complete url of the API
-//        // 3rd param => Response.Listener -> Success procedure
-//        // 4th param => Response.ErrorListener -> Error procedure
-//        return new StringRequest(Request.Method.GET, url,
-//                new Response.Listener<String>() {
-//                    // 3rd param - method onResponse lays the code procedure of success return
-//                    // SUCCESS
-//                    @Override
-//                    public void onResponse(String response) {
-//                        // try/catch block for returned JSON data
-//                        // see API's documentation for returned format
-//                        try {
-//                            JSONObject result = new JSONObject(response).getJSONObject("list");
-//                            int maxItems = result.getInt("end");
-//                            JSONArray resultList = result.getJSONArray("item");
-//
-//                        ...
-//
-//                            // catch for the JSON parsing error
-//                        } catch (JSONException e) {
-//                            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-//                        }
-//                    } // public void onResponse(String response)
-//                }, // Response.Listener<String>()
-//                new Response.ErrorListener() {
-//                    // 4th param - method onErrorResponse lays the code procedure of error return
-//                    // ERROR
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        // display a simple message on the screen
-//                        Toast.makeText(MainActivity.this, "Food source is not responding (USDA API)", Toast.LENGTH_LONG).show();
-//                    }
-//                });
-//    }
 
-//    /**
-//     * Make an API call.
-//     */
-//    void startAPICall() {
-//        try {
-//            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-//                    Request.Method.GET,
-//                    "",
-//                    null,
-//                    new Response.Listener<JSONObject>() {
-//                        @Override
-//                        public void onResponse(final JSONObject response) {
-//                            Log.d(TAG, response.toString());
-//                        }
-//                    }, new Response.ErrorListener() {
-//                @Override
-//                public void onErrorResponse(final VolleyError error) {
-//                    Log.w(TAG, error.toString());
-//                }
-//            });
-//            requestQueue.add(jsonObjectRequest);
-//        } catch (Exception e) {
-//            e.printStackTrace();
+    void startAPICall() {
+        /**
+         * Make an API call
+         */
+        try {
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                    Request.Method.GET,
+                    "https://www.food2fork.com/api/search?key=" + API_KEY + "&q=" + message + "&page=" + pagecount,
+                    message,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(final JSONObject response) {
+                            Log.d("This is the response", response.toString());
+
+//                            JSONObject result = jsonParse(response.toString()).getAsJsonObject();
+//                            JSONArray recipe = result.get("recipes").getAsJsonArray();
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(final VolleyError error) {
+                    Log.w(TAG, error.toString());
+                }
+            });
+            requestQueue.add(jsonObjectRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void jsonParse(JSONObject jsonObject) {
+        try {
+            String count = jsonObject.getString("count");
+            String recipes = jsonObject.getString("recipes");
+            String title = jsonObject.getString("title");
+        } catch (Exception e) {
+            resultFound = false;
+        }
+//        if (!resultFound) {
+//            result.setText("Here_is_the_recipes:");
+//        } else {
+//            result.setText("No Recipes Found");
 //        }
-//
-//    }
+    }
 }
+//https://www.food2fork.com/api/search?key=d6ab99096385e79634e00142feb80e9e&q=chicken%20breast&page=2
+//https://www.food2fork.com/api/search?key=d6ab99096385e79634e00142feb80e9e&q=null&page=1
