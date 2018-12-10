@@ -32,7 +32,7 @@
         android:layout_marginEnd="23dp"
         android:layout_marginRight="23dp"
         android:layout_marginBottom="237dp"
-        android:onClick="choose"
+        android:onClick="search"
         android:text="@string/button"
         android:textColor="@color/colorPrimaryDark"
         app:layout_constraintBottom_toBottomOf="parent"

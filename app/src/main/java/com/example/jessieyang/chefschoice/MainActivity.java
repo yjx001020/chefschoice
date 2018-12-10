@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "chefschoice";
     private static final String API_KEY = "d6ab99096385e79634e00142feb80e9e";
     private int pagecount;
+    private String message;
 //    private TextView result = findViewById(R.id.textView4);
     private boolean resultFound = true;
 
@@ -65,12 +66,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void choose(View view) {
+    public void search(View view) {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editText);
-        String message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
         startAPICall();
+        EditText editText = (EditText) findViewById(R.id.editText);
+        message = editText.getText().toString();
         startActivity(intent);
     }
 
