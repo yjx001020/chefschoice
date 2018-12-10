@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "chefschoice";
     private static final String API_KEY = "d6ab99096385e79634e00142feb80e9e";
     private String message;
-    private int pagecount = 1;
+    private int pagecount;
 //    private TextView result = findViewById(R.id.textView4);
     private boolean resultFound = true;
 
@@ -63,11 +63,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void search(View view) {
+    public void choose(View view) {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startAPICall();
         EditText editText = (EditText) findViewById(R.id.editText);
         message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
     }
 
@@ -79,15 +80,19 @@ public class MainActivity extends AppCompatActivity {
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     Request.Method.GET,
-                    "https://www.food2fork.com/api/search?key=" + API_KEY + "&q=" + message + "&page=" + pagecount,
-                    message,
+                    "https://www.food2fork.com/api/search?key=" + API_KEY + "&q=" + getIntent() + "&page=" + pagecount,
+                    null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(final JSONObject response) {
                             Log.d("This is the response", response.toString());
 
-//                            JSONObject result = jsonParse(response.toString()).getAsJsonObject();
-//                            JSONArray recipe = result.get("recipes").getAsJsonArray();
+                            try {
+                                jsonParse(response);
+                                JSONArray recipe = result.get("recipes").getAsJsonArray();
+                            } catch (Exception e) {
+                                Log.w("No Recipes Available", e.toString());
+                            }
                         }
                     }, new Response.ErrorListener() {
                 @Override
