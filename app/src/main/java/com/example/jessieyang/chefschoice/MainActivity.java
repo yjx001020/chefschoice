@@ -34,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String API_KEY = "d6ab99096385e79634e00142feb80e9e";
     private int pagecount;
     private String message;
+    private String firstname;
+    private String firstid;
+    private String firsturl;
+    private TextView shown;
 //    private TextView result = findViewById(R.id.textView4);
     private boolean resultFound = true;
 
@@ -54,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Load the main layout for our activity
         setContentView(R.layout.activity_main);
+
+        shown = findViewById(R.id.sample);
 
         // Attach the handler to our UI button
         final Button startAPICall = findViewById(R.id.button);
@@ -93,6 +99,17 @@ public class MainActivity extends AppCompatActivity {
                             JsonParser parser = new JsonParser();
                             JsonObject result = parser.parse(response.toString()).getAsJsonObject();
                             JsonArray recipes = result.get("recipes").getAsJsonArray();
+
+                            try {
+                                JsonObject first = recipes.get(0).getAsJsonObject();
+                                firstname = first.get("title").getAsString();
+                                firstid = first.get("recipe_id").getAsString();
+                                firsturl = first.get("source_url").getAsString();
+                                shown.setText("");
+                                shown.append(firstname);
+                            } catch (Exception e) {
+                                firstname = "No Recipes Found";
+                            }
                         }
                     }, new Response.ErrorListener() {
                 @Override
