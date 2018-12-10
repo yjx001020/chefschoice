@@ -92,11 +92,6 @@ public class MainActivity extends AppCompatActivity {
                             JsonParser parser = new JsonParser();
                             JsonObject result = parser.parse(response.toString()).getAsJsonObject();
                             JsonArray recipes = result.get("recipes").getAsJsonArray();
-//                            try {
-//
-//                            } catch (Exception e) {
-//                                Log.w("No Recipes Available", e.toString());
-//                            }
                         }
                     }, new Response.ErrorListener() {
                 @Override
