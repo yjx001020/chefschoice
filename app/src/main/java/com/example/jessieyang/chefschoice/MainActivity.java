@@ -74,16 +74,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    public void search(View view) {
-//        Intent intent = new Intent(this, DisplayMessageActivity.class);
-//        EditText editText = (EditText) findViewById(R.id.editText);
-//        message = editText.getText().toString();
-//        intent.putExtra(EXTRA_MESSAGE, message);
-//        startAPICall();
-//        startActivity(intent);
-//    }
-
-
     void startAPICall() {
         /**
          * Make an API call
@@ -114,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
                                 shown.append(firsturl);
                             } catch (Exception e) {
                                 firstname = "No Recipes Found";
+                                shown.setText(firstname);
                             }
                         }
                     }, new Response.ErrorListener() {
