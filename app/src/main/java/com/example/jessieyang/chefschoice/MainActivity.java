@@ -31,7 +31,7 @@ import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_MESSAGE = "com.example.jessieyang.MESSAGE";
     private static final String TAG = "chefschoice";
-    private static final String API_KEY = "d6ab99096385e79634e00142feb80e9e";
+    private static final String API_KEY = "f80391b0eed55467e2dfe2038c23ea53";
     private int pagecount;
     private String message;
     private String firstname;
@@ -67,19 +67,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(final View v) {
                 Log.d(TAG, "Start API button clicked");
+                EditText editText = (EditText) findViewById(R.id.editText);
+                message = editText.getText().toString();
                 startAPICall();
             }
         });
     }
 
-    public void search(View view) {
-        Intent intent = new Intent(this, DisplayMessageActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, message);
-        startAPICall();
-        EditText editText = (EditText) findViewById(R.id.editText);
-        message = editText.getText().toString();
-        startActivity(intent);
-    }
+//    public void search(View view) {
+//        Intent intent = new Intent(this, DisplayMessageActivity.class);
+//        EditText editText = (EditText) findViewById(R.id.editText);
+//        message = editText.getText().toString();
+//        intent.putExtra(EXTRA_MESSAGE, message);
+//        startAPICall();
+//        startActivity(intent);
+//    }
 
 
     void startAPICall() {
@@ -88,8 +90,9 @@ public class MainActivity extends AppCompatActivity {
          */
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                    //API_KEY can only be used for 50 times.
                     Request.Method.GET,
-                    "https://www.food2fork.com/api/search?key=" + API_KEY + "&q=" + getIntent() + "&page=" + pagecount,
+                    "https://www.food2fork.com/api/search?key=" + API_KEY + "&q=" + message + "&page=" + pagecount,
                     null,
                     new Response.Listener<JSONObject>() {
                         @Override
@@ -106,7 +109,9 @@ public class MainActivity extends AppCompatActivity {
                                 firstid = first.get("recipe_id").getAsString();
                                 firsturl = first.get("source_url").getAsString();
                                 shown.setText("");
-                                shown.append(firstname);
+                                shown.append(firstname + " ");
+                                shown.append(firstid + " ");
+                                shown.append(firsturl);
                             } catch (Exception e) {
                                 firstname = "No Recipes Found";
                             }
