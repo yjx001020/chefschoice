@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private String firstid;
     private String firsturl;
     private TextView shown;
+    private int count;
+    private String previous;
 //    private TextView result = findViewById(R.id.textView4);
     private boolean resultFound = true;
 
@@ -70,9 +72,18 @@ public class MainActivity extends AppCompatActivity {
                 EditText editText = (EditText) findViewById(R.id.editText);
                 message = editText.getText().toString();
                 startAPICall();
+                if (previous == null) {
+                    count = 0;
+                } else if (previous.equals(message)) {
+                    count++;
+                } else {
+                    count = 0;
+                }
+                previous = message;
             }
         });
     }
+
 
     void startAPICall() {
         /**
@@ -94,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                             JsonArray recipes = result.get("recipes").getAsJsonArray();
 
                             try {
-                                JsonObject first = recipes.get(0).getAsJsonObject();
+                                JsonObject first = recipes.get(count).getAsJsonObject();
                                 firstname = first.get("title").getAsString();
                                 firstid = first.get("recipe_id").getAsString();
                                 firsturl = first.get("source_url").getAsString();
